@@ -1,64 +1,85 @@
 import Checkbox from "expo-checkbox";
-import React, { useState, useMemo } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Button, Alert } from "react-native";
 import Card from "../components/Card";
 import Input from "../components/Input";
-
-const validateName = (name) => {
-  if (/\d/.test(name)) {
-    return "Name should only contain non-numeric characters";
-  }
-  if (name.length <= 1) {
-    return "Name should contain at least 2 characters";
-  }
-  return "";
-}
-
-const validateEmail = (email) => {
-  if (!/^\S+@\S+\.\S+$/.test(email)) {
-    return "Invalid email!";
-  }
-  return "";
-}
-
-const validatePhone = (phone) => {
-  if (
-    !/^\d{10}$/.test(phone) ||
-    phone[phone.length - 1] < 2
-  ) {
-    return "Invalid phone number!";
-  }
-  return "";
-}
+import ConfirmScreen from "./ConfirmScreen";
+import { GameContext } from "../context/GameContext";
+import { validateName } from "../utils/validateName";
+import { validateEmail } from "../utils/validateEmail";
+import { validatePhone } from "../utils/validatePhone";
 
 export default function StartScreen() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [checkboxSelected, setCheckboxSelected] = useState(false);
+  const { name, setName, email, setEmail, phone, setPhone, setCurrentScreen } =
+    useContext(GameContext);
 
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  
+
+  const canRegister = checkboxSelected;
 
   const handleNameChange = (name) => {
     setName(name);
     const error = validateName(name);
     setNameError(error);
-  }
+  };
 
   const handlePhoneChange = (phone) => {
     setPhone(phone);
     const error = validatePhone(phone);
     setPhoneError(error);
-  }
+  };
 
   const handleEmailChange = (email) => {
     setEmail(email);
     const error = validateEmail(email);
     setEmailError(error);
-  }
+  };
+
+  const handleReset = () => {
+    // clears all the inputs
+    setName("");
+    setEmail("");
+    setPhone("");
+    setNameError("");
+    setEmailError("");
+    setPhoneError("");
+
+    // unselect the checkbox
+    setCheckboxSelected(false);
+  };
+
+  const handleRegister = () => {
+    const nameError = validateName(name);
+    const emailError = validateEmail(email);
+    const phoneError = validatePhone(phone);
+
+    const hasError = !!(nameError || emailError || phoneError);
+
+    if (hasError) {
+      setNameError(nameError);
+      setEmailError(emailError);
+      setPhoneError(phoneError);
+      const msg = [nameError, emailError, phoneError]
+        .filter(Boolean)
+        .join("\n");
+      Alert.alert(msg);
+      return;
+    }
+    setIsConfirmVisible(true);
+  };
+
+  const handleGoBack = () => {
+    setIsConfirmVisible(false);
+  };
+
+  const handleContinue = () => {
+    setIsConfirmVisible(false);
+    setCurrentScreen("game");
+  };
 
   return (
     <View>
@@ -81,10 +102,23 @@ export default function StartScreen() {
           onChangeText={handlePhoneChange}
           error={phoneError}
         />
-        <Checkbox />
-        <Button title="Register" />
-        <Button title="Reset" />
+        <Checkbox
+          value={checkboxSelected}
+          onValueChange={setCheckboxSelected}
+          color={checkboxSelected ? "#4630EB" : undefined}
+        />
+        <Button
+          title="Register"
+          disabled={!canRegister}
+          onPress={handleRegister}
+        />
+        <Button title="Reset" onPress={handleReset} />
       </Card>
+      <ConfirmScreen
+        visible={isConfirmVisible}
+        onGoBack={handleGoBack}
+        onContinue={handleContinue}
+      />
     </View>
   );
 }
