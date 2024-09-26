@@ -2,27 +2,28 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
   TextInput,
   Button,
   Alert,
+  Image,
 } from "react-native";
 import { useState, useEffect, useContext, useRef } from "react";
 import { GameContext } from "../context/GameContext";
 import { generateAnswer } from "../utils/generateAnswer";
 import { checkUserAnswerValid } from "../utils/checkUserAnswerValid";
-import { MAX_SECONDS, MAX_ATTEMPTS } from "../config";
+import { colors, MAX_SECONDS, MAX_ATTEMPTS } from "../utils/helper";
+import Card from "../components/Card";
 
 const BeforeGame = ({ startGuess, lastDigit }) => {
   return (
-    <View style={styles.promptBox}>
+    <Card>
       <Text style={styles.promptText}>
         Guess a number between 1 & 100 that is multiply of {lastDigit}
       </Text>
-      <Pressable onPress={startGuess}>
-        <Text style={styles.startText}>Start</Text>
-      </Pressable>
-    </View>
+      <Button title="Start" onPress={startGuess}>
+        color={colors.buttonTextBlue}
+      </Button>
+    </Card>
   );
 };
 
@@ -42,11 +43,15 @@ const Guess = ({
   };
 
   return (
-    <View style={styles.promptBox}>
+    <Card>
       <Text style={styles.promptText}>
         Guess a number between 1 & 100 that is multiply of {lastDigit}
       </Text>
-      <TextInput value={userAnswer} onChangeText={onChangeUserAnswer} />
+      <TextInput
+        value={userAnswer}
+        onChangeText={onChangeUserAnswer}
+        style={styles.input}
+      />
       <Text>Attempts left: {attemptsLeft}</Text>
       <Text>Timer: {seconds}</Text>
       {isShowHint && (
@@ -56,31 +61,74 @@ const Guess = ({
       )}
       <Button title="USE A HINT" onPress={handleShowHint} />
       <Button title="SUBMIT GUESS" onPress={onSubmitGuess} />
-    </View>
+    </Card>
   );
 };
 
 const CorrectResult = ({ attemptsLeft, onNewGame }) => {
   return (
-    <View>
-      <Text>You guess correct!</Text>
-      <Text>Attempts used: {MAX_ATTEMPTS - attemptsLeft}</Text>
-      <Button title="NEW GAME" onPress={onNewGame} />
-    </View>
+    <Card>
+      <Text style={styles.text}>You guess correct!</Text>
+      <Text style={styles.text}>
+        Attempts used: {MAX_ATTEMPTS - attemptsLeft}
+      </Text>
+      <Image
+        source={{
+          uri: "https://picsum.photos/id/1024/100/100",
+        }}
+        style={styles.image}
+        alt="The game is over"
+      />
+      <Button
+        title="NEW GAME"
+        onPress={onNewGame}
+        color={colors.buttonTextBlue}
+      />
+    </Card>
   );
 };
 
-const OutOfTimeResult = () => {
-  return <Text>Time up</Text>;
+const OutOfTimeResult = ({ onNewGame }) => {
+  return (
+    <Card>
+      <Text style={styles.text}>The game is over</Text>
+      <Image
+        source={require("../assets/sad.jpeg")}
+        style={styles.image}
+        alt="The game is over"
+      />
+      <Text style={styles.text}>You are out of time</Text>
+      <Button
+        title="NEW GAME"
+        onPress={onNewGame}
+        color={colors.buttonTextBlue}
+      />
+    </Card>
+  );
 };
 
-const OutOfAttemptsResult = () => {
-  return <Text>Out of Attempts</Text>;
+const OutOfAttemptsResult = ({ onNewGame }) => {
+  return (
+    <Card>
+      <Text style={styles.text}>The game is over</Text>
+      <Image
+        source={require("../assets/sad.jpeg")}
+        style={styles.image}
+        alt="The game is over"
+      />
+      <Text style={styles.text}>You are out of attempts</Text>
+      <Button
+        title="NEW GAME"
+        onPress={onNewGame}
+        color={colors.buttonTextBlue}
+      />
+    </Card>
+  );
 };
 
 const IncorrectResult = ({ userAnswer, answer, onTryAgain, onEndGame }) => {
   return (
-    <View>
+    <Card>
       <Text>You did not guess correct!</Text>
       <Text>
         {+userAnswer < answer
@@ -89,7 +137,7 @@ const IncorrectResult = ({ userAnswer, answer, onTryAgain, onEndGame }) => {
       </Text>
       <Button title="TRY AGAIN" onPress={onTryAgain} />
       <Button title="END THE GAME" onPress={onEndGame} />
-    </View>
+    </Card>
   );
 };
 
@@ -113,8 +161,8 @@ export default function GameScreen() {
   };
 
   const handleNewGame = () => {
-    setStage("beforeGame");
     clearInterval(timerRef.current);
+    setStage("beforeGame");
   };
 
   const startGuess = () => {
@@ -156,6 +204,7 @@ export default function GameScreen() {
         [{ text: "OKay" }],
         { cancelable: true },
       );
+      setUserAnswer("");
       return;
     }
 
@@ -172,15 +221,14 @@ export default function GameScreen() {
   const handleEndGame = () => {
     setStage("beforeGame");
     clearInterval(timerRef.current);
-    // TODO: what to do when ending the game?
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.gameContainer}>
-        <Pressable onPress={handleRestart}>
-          <Text style={styles.restartText}>Restart</Text>
-        </Pressable>
+        <View style={styles.restartButtonContainer}>
+          <Button title="Restart" onPress={handleRestart} />
+        </View>
         {stage === "beforeGame" && (
           <BeforeGame startGuess={startGuess} lastDigit={lastDigit} />
         )}
@@ -202,9 +250,9 @@ export default function GameScreen() {
               onNewGame={handleNewGame}
             />
           ) : attemptsLeft === 0 ? (
-            <OutOfAttemptsResult />
+            <OutOfAttemptsResult onNewGame={handleNewGame} />
           ) : seconds === 0 ? (
-            <OutOfTimeResult />
+            <OutOfTimeResult onNewGame={handleNewGame} />
           ) : (
             <IncorrectResult
               userAnswer={userAnswer}
@@ -223,35 +271,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#79bbff",
+    backgroundColor: colors.backgroundBlue,
+    width: "100%",
+    height: "100%",
   },
   gameContainer: {
     width: "80%",
     alignItems: "center",
   },
-  restartText: {
-    fontSize: 16,
-    color: "#4d83ff",
+  restartButtonContainer: {
     alignSelf: "flex-end",
     marginBottom: 20,
   },
-  promptBox: {
-    backgroundColor: "#9e9e9e",
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   promptText: {
-    color: "#4b0f8e",
+    color: colors.textPurple,
     fontSize: 18,
     textAlign: "center",
     marginBottom: 10,
   },
-  startText: {
-    color: "#4b0f8e",
-    fontSize: 20,
-    fontWeight: "bold",
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.textPurple,
+    width: 50,
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  text: {
+    color: colors.textPurple,
+    fontSize: 16,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    margin: 10,
   },
 });

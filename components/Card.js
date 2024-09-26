@@ -1,4 +1,5 @@
 import { View, StyleSheet } from "react-native";
+import {colors} from "../utils/helper";
 
 export default function Card({ children }) {
   return <View style={styles.card}>{children}</View>;
@@ -6,14 +7,16 @@ export default function Card({ children }) {
 
 const styles = StyleSheet.create({
   card: {
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
-    backgroundColor: "white",
+    backgroundColor: colors.backgroundGrey,
     borderRadius: 10,
     padding: 20,
-    margin: 10,
+    margin: 20,
+    // width: "70%",
+    // maxWidth: 400,
+    alignItems: "center",
   },
 });

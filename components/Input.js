@@ -1,4 +1,5 @@
 import { Text, TextInput, View, StyleSheet } from "react-native";
+import { colors } from '../utils/helper';
 
 export default function Input({
   title,
@@ -9,13 +10,13 @@ export default function Input({
 }) {
   return (
     <View style={styles.container}>
-      <Text>{title}</Text>
-      <TextInput
+      <Text style={styles.title}>{title}</Text>
+      <TextInput style={styles.input}
         value={value}
         placeholder={placeholder}
         onChangeText={onChangeText}
       />
-      {error && <Text>{error}</Text>}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -24,18 +25,19 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
   },
+  title: {
+    color: colors.textPurple,
+    fontSize: 16,
+    marginBottom: 5,
+  },
   input: {
     height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-  },
-  errorInput: {
-    borderColor: "red",
+    color: colors.textPurple,
+    borderBottomWidth: 2,
+    paddingHorizontal: 5,
   },
   errorText: {
-    color: "red",
+    color: colors.textGrey,
     marginTop: 5,
   },
 });

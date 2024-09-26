@@ -1,6 +1,6 @@
 import Checkbox from "expo-checkbox";
 import React, { useState, useContext } from "react";
-import { View, Button, Alert } from "react-native";
+import { View, Button, Alert, Text, StyleSheet } from "react-native";
 import Card from "../components/Card";
 import Input from "../components/Input";
 import ConfirmScreen from "./ConfirmScreen";
@@ -8,6 +8,7 @@ import { GameContext } from "../context/GameContext";
 import { validateName } from "../utils/validateName";
 import { validateEmail } from "../utils/validateEmail";
 import { validatePhone } from "../utils/validatePhone";
+import { colors } from "../utils/helper";
 
 export default function StartScreen() {
   const { name, setName, email, setEmail, phone, setPhone, setCurrentScreen } =
@@ -82,37 +83,50 @@ export default function StartScreen() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome</Text>
       <Card>
-        <Input
-          title="Name"
-          value={name}
-          onChangeText={handleNameChange}
-          error={nameError}
-        />
-        <Input
-          title="Email address"
-          value={email}
-          onChangeText={handleEmailChange}
-          error={emailError}
-        />
-        <Input
-          title="Phone Number"
-          value={phone}
-          onChangeText={handlePhoneChange}
-          error={phoneError}
-        />
-        <Checkbox
-          value={checkboxSelected}
-          onValueChange={setCheckboxSelected}
-          color={checkboxSelected ? "#4630EB" : undefined}
-        />
-        <Button
-          title="Register"
-          disabled={!canRegister}
-          onPress={handleRegister}
-        />
-        <Button title="Reset" onPress={handleReset} />
+        <View style={styles.form}>
+          <Input
+            title="Name:"
+            value={name}
+            onChangeText={handleNameChange}
+            error={nameError}
+          />
+          <Input
+            title="Email address:"
+            value={email}
+            onChangeText={handleEmailChange}
+            error={emailError}
+          />
+          <Input
+            title="Phone Number:"
+            value={phone}
+            onChangeText={handlePhoneChange}
+            error={phoneError}
+          />
+        </View>
+        <View style={styles.checkboxContainer}>
+          <Checkbox
+            value={checkboxSelected}
+            onValueChange={setCheckboxSelected}
+            color={checkboxSelected ? colors.textPurple : undefined}
+          />
+          <Text style={styles.checkboxText}>I am not a robot</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Reset"
+            color={colors.buttonTextRed}
+            onPress={handleReset}
+          />
+          <Button
+            title="Register"
+            color={colors.buttonTextBlue}
+            disabled={!canRegister}
+            onPress={handleRegister}
+          />
+        </View>
       </Card>
       <ConfirmScreen
         visible={isConfirmVisible}
@@ -122,3 +136,42 @@ export default function StartScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.backgroundBlue,
+    width: "100%",
+    height: "100%",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: colors.textPurple,
+  },
+  form: {
+    width: 200,
+  },
+  inputText: {
+    color: colors.textPurple,
+    fontSize: 16,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  checkboxText: {
+    marginLeft: 10,
+    color: colors.textPurple,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    gap: 10,
+    margin: 20,
+  },
+});
