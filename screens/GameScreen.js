@@ -20,9 +20,11 @@ const BeforeGame = ({ startGuess, lastDigit }) => {
       <Text style={styles.promptText}>
         Guess a number between 1 & 100 that is multiply of {lastDigit}
       </Text>
-      <Button title="Start" onPress={startGuess}>
-        color={colors.buttonTextBlue}
-      </Button>
+      <View style={styles.buttonContainer}>
+        <Button title="Start" onPress={startGuess}>
+          color={colors.buttonTextBlue}
+        </Button>
+      </View>
     </Card>
   );
 };
@@ -59,8 +61,10 @@ const Guess = ({
           The number is between {answer < 50 ? "1 and 50" : "50 and 100"}
         </Text>
       )}
-      <Button title="USE A HINT" onPress={handleShowHint} />
-      <Button title="SUBMIT GUESS" onPress={onSubmitGuess} />
+      <View style={styles.buttonContainer}>
+        <Button title="USE A HINT" onPress={handleShowHint} />
+        <Button title="SUBMIT GUESS" onPress={onSubmitGuess} />
+      </View>
     </Card>
   );
 };
@@ -98,11 +102,13 @@ const OutOfTimeResult = ({ onNewGame }) => {
         alt="The game is over"
       />
       <Text style={styles.text}>You are out of time</Text>
-      <Button
-        title="NEW GAME"
-        onPress={onNewGame}
-        color={colors.buttonTextBlue}
-      />
+      <View style={styles.buttonContainer}>
+        <Button
+          title="NEW GAME"
+          onPress={onNewGame}
+          color={colors.buttonTextBlue}
+        />
+      </View>
     </Card>
   );
 };
@@ -135,8 +141,10 @@ const IncorrectResult = ({ userAnswer, answer, onTryAgain, onEndGame }) => {
           ? "You should guess higher."
           : "You should guess lower."}
       </Text>
-      <Button title="TRY AGAIN" onPress={onTryAgain} />
-      <Button title="END THE GAME" onPress={onEndGame} />
+      <View style={styles.buttonContainer}>
+        <Button title="TRY AGAIN" onPress={onTryAgain} />
+        <Button title="END THE GAME" onPress={onEndGame} />
+      </View>
     </Card>
   );
 };
@@ -306,4 +314,10 @@ const styles = StyleSheet.create({
     height: 100,
     margin: 10,
   },
+  buttonContainer: {
+    justifyContent: "space-evenly",
+    marginTop: 20,
+    width: "80%",
+    gap: 10,
+  }
 });

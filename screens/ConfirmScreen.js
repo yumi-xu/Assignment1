@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     marginTop: 20,
     width: "80%",
+    gap: 10,
   },
   text: {
     color: colors.textPurple,
