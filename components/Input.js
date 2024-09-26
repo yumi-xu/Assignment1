@@ -1,5 +1,5 @@
 import { Text, TextInput, View, StyleSheet } from "react-native";
-import { colors } from '../utils/helper';
+import { colors } from "../utils/helper";
 
 export default function Input({
   title,
@@ -11,7 +11,8 @@ export default function Input({
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <TextInput style={styles.input}
+      <TextInput
+        style={styles.input}
         value={value}
         placeholder={placeholder}
         onChangeText={onChangeText}
