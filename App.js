@@ -1,11 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import StartScreen from "./screens/StartScreen";
+import GameScreen from "./screens/GameScreen";
+import React, { useContext } from "react";
+import { GameContext, GameProvider } from "./context/GameContext";
+
+const Entry = () => {
+  const { currentScreen } = useContext(GameContext);
+  if (currentScreen === "start") {
+    return <StartScreen />;
+  }
+  return <GameScreen />;
+};
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <GameProvider>
+        <Entry />
+      </GameProvider>
     </View>
   );
 }
@@ -13,8 +26,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
